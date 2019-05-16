@@ -1,0 +1,409 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="EscolaModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Aluno">
+          <Key>
+            <PropertyRef Name="AlunoID" />
+          </Key>
+          <Property Name="AlunoID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AlunoNome" Type="varchar" MaxLength="250" />
+          <Property Name="PadraoID" Type="int" />
+          <Property Name="RowVersion" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AlunoCurso">
+          <Key>
+            <PropertyRef Name="AlunoID" />
+            <PropertyRef Name="CursoID" />
+          </Key>
+          <Property Name="AlunoID" Type="int" Nullable="false" />
+          <Property Name="CursoID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AlunoEndereco">
+          <Key>
+            <PropertyRef Name="AlunoID" />
+          </Key>
+          <Property Name="AlunoID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Endereco1" Type="varchar" MaxLength="250" />
+          <Property Name="Endereco2" Type="varchar" MaxLength="250" />
+          <Property Name="Cidade" Type="varchar" MaxLength="250" />
+          <Property Name="Estado" Type="varchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="Curso">
+          <Key>
+            <PropertyRef Name="CursoID" />
+          </Key>
+          <Property Name="CursoID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CursoNome" Type="varchar" MaxLength="250" />
+          <Property Name="CursoLocalizacao" Type="geography" />
+          <Property Name="ProfessorID" Type="int" />
+        </EntityType>
+        <EntityType Name="Padrao">
+          <Key>
+            <PropertyRef Name="PadraoID" />
+          </Key>
+          <Property Name="PadraoID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PadraoNome" Type="varchar" MaxLength="250" />
+          <Property Name="Descricao" Type="varchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="Professor">
+          <Key>
+            <PropertyRef Name="ProfessorID" />
+          </Key>
+          <Property Name="ProfessorID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProfessorNome" Type="varchar" MaxLength="250" />
+          <Property Name="PadraoID" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'EntityFramework.dbo.view_AlunoCurso' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="view_AlunoCurso">
+          <Key>
+            <PropertyRef Name="AlunoID" />
+            <PropertyRef Name="CursoID" />
+          </Key>
+          <Property Name="AlunoID" Type="int" Nullable="false" />
+          <Property Name="AlunoNome" Type="varchar" MaxLength="250" />
+          <Property Name="CursoID" Type="int" Nullable="false" />
+          <Property Name="CursoNome" Type="varchar" MaxLength="250" />
+        </EntityType>
+        <Association Name="FK_Aluno_Padrao">
+          <End Role="Padrao" Type="Self.Padrao" Multiplicity="0..1" />
+          <End Role="Aluno" Type="Self.Aluno" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Padrao">
+              <PropertyRef Name="PadraoID" />
+            </Principal>
+            <Dependent Role="Aluno">
+              <PropertyRef Name="PadraoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_padraoID">
+          <End Role="Padrao" Type="Self.Padrao" Multiplicity="0..1" />
+          <End Role="Professor" Type="Self.Professor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Padrao">
+              <PropertyRef Name="PadraoID" />
+            </Principal>
+            <Dependent Role="Professor">
+              <PropertyRef Name="PadraoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_professorID">
+          <End Role="Professor" Type="Self.Professor" Multiplicity="0..1" />
+          <End Role="Curso" Type="Self.Curso" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Professor">
+              <PropertyRef Name="ProfessorID" />
+            </Principal>
+            <Dependent Role="Curso">
+              <PropertyRef Name="ProfessorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="GetCursosPorAlunoId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AlunoId" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_AtualizarAluno" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AlunoId" Type="int" Mode="In" />
+          <Parameter Name="PadraoId" Type="int" Mode="In" />
+          <Parameter Name="AlunoNome" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="sp_DeletarAluno" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AlunoId" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_InserirAlunoInfo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="PadraoId" Type="int" Mode="In" />
+          <Parameter Name="AlunoNome" Type="nvarchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="EscolaModelStoreContainer">
+          <EntitySet Name="Aluno" EntityType="Self.Aluno" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AlunoCurso" EntityType="Self.AlunoCurso" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AlunoEndereco" EntityType="Self.AlunoEndereco" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Curso" EntityType="Self.Curso" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Padrao" EntityType="Self.Padrao" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Professor" EntityType="Self.Professor" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="view_AlunoCurso" EntityType="Self.view_AlunoCurso" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [view_AlunoCurso].[AlunoID] AS [AlunoID], 
+    [view_AlunoCurso].[AlunoNome] AS [AlunoNome], 
+    [view_AlunoCurso].[CursoID] AS [CursoID], 
+    [view_AlunoCurso].[CursoNome] AS [CursoNome]
+    FROM [dbo].[view_AlunoCurso] AS [view_AlunoCurso]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_Aluno_Padrao" Association="Self.FK_Aluno_Padrao">
+            <End Role="Padrao" EntitySet="Padrao" />
+            <End Role="Aluno" EntitySet="Aluno" />
+          </AssociationSet>
+          <AssociationSet Name="FK_padraoID" Association="Self.FK_padraoID">
+            <End Role="Padrao" EntitySet="Padrao" />
+            <End Role="Professor" EntitySet="Professor" />
+          </AssociationSet>
+          <AssociationSet Name="FK_professorID" Association="Self.FK_professorID">
+            <End Role="Professor" EntitySet="Professor" />
+            <End Role="Curso" EntitySet="Curso" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="EscolaModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Aluno">
+          <Key>
+            <PropertyRef Name="AlunoID" />
+          </Key>
+          <Property Name="AlunoID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AlunoNome" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="PadraoID" Type="Int32" />
+          <Property Name="RowVersion" Type="Binary" MaxLength="8" FixedLength="true" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
+          <NavigationProperty Name="Padrao" Relationship="Self.FK_Aluno_Padrao" FromRole="Aluno" ToRole="Padrao" />
+        </EntityType>
+        <EntityType Name="AlunoCurso">
+          <Key>
+            <PropertyRef Name="AlunoID" />
+            <PropertyRef Name="CursoID" />
+          </Key>
+          <Property Name="AlunoID" Type="Int32" Nullable="false" />
+          <Property Name="CursoID" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AlunoEndereco">
+          <Key>
+            <PropertyRef Name="AlunoID" />
+          </Key>
+          <Property Name="AlunoID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Endereco1" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Endereco2" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Cidade" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Curso">
+          <Key>
+            <PropertyRef Name="CursoID" />
+          </Key>
+          <Property Name="CursoID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CursoNome" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="CursoLocalizacao" Type="Geography" />
+          <Property Name="ProfessorID" Type="Int32" />
+          <NavigationProperty Name="Professor" Relationship="Self.FK_professorID" FromRole="Curso" ToRole="Professor" />
+        </EntityType>
+        <EntityType Name="Padrao">
+          <Key>
+            <PropertyRef Name="PadraoID" />
+          </Key>
+          <Property Name="PadraoID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PadraoNome" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Descricao" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Aluno" Relationship="Self.FK_Aluno_Padrao" FromRole="Padrao" ToRole="Aluno" />
+          <NavigationProperty Name="Professor" Relationship="Self.FK_padraoID" FromRole="Padrao" ToRole="Professor" />
+        </EntityType>
+        <EntityType Name="Professor">
+          <Key>
+            <PropertyRef Name="ProfessorID" />
+          </Key>
+          <Property Name="ProfessorID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProfessorNome" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="PadraoID" Type="Int32" />
+          <NavigationProperty Name="Curso" Relationship="Self.FK_professorID" FromRole="Professor" ToRole="Curso" />
+          <NavigationProperty Name="Padrao" Relationship="Self.FK_padraoID" FromRole="Professor" ToRole="Padrao" />
+        </EntityType>
+        <EntityType Name="view_AlunoCurso">
+          <Key>
+            <PropertyRef Name="AlunoID" />
+            <PropertyRef Name="CursoID" />
+          </Key>
+          <Property Name="AlunoID" Type="Int32" Nullable="false" />
+          <Property Name="AlunoNome" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="CursoID" Type="Int32" Nullable="false" />
+          <Property Name="CursoNome" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK_Aluno_Padrao">
+          <End Role="Padrao" Type="Self.Padrao" Multiplicity="0..1" />
+          <End Role="Aluno" Type="Self.Aluno" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Padrao">
+              <PropertyRef Name="PadraoID" />
+            </Principal>
+            <Dependent Role="Aluno">
+              <PropertyRef Name="PadraoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_professorID">
+          <End Role="Professor" Type="Self.Professor" Multiplicity="0..1" />
+          <End Role="Curso" Type="Self.Curso" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Professor">
+              <PropertyRef Name="ProfessorID" />
+            </Principal>
+            <Dependent Role="Curso">
+              <PropertyRef Name="ProfessorID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_padraoID">
+          <End Role="Padrao" Type="Self.Padrao" Multiplicity="0..1" />
+          <End Role="Professor" Type="Self.Professor" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Padrao">
+              <PropertyRef Name="PadraoID" />
+            </Principal>
+            <Dependent Role="Professor">
+              <PropertyRef Name="PadraoID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="EscolaEntity" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Aluno" EntityType="Self.Aluno" />
+          <EntitySet Name="AlunoCurso" EntityType="Self.AlunoCurso" />
+          <EntitySet Name="AlunoEndereco" EntityType="Self.AlunoEndereco" />
+          <EntitySet Name="Curso" EntityType="Self.Curso" />
+          <EntitySet Name="Padrao" EntityType="Self.Padrao" />
+          <EntitySet Name="Professor" EntityType="Self.Professor" />
+          <EntitySet Name="view_AlunoCurso" EntityType="Self.view_AlunoCurso" />
+          <AssociationSet Name="FK_Aluno_Padrao" Association="Self.FK_Aluno_Padrao">
+            <End Role="Padrao" EntitySet="Padrao" />
+            <End Role="Aluno" EntitySet="Aluno" />
+          </AssociationSet>
+          <AssociationSet Name="FK_professorID" Association="Self.FK_professorID">
+            <End Role="Professor" EntitySet="Professor" />
+            <End Role="Curso" EntitySet="Curso" />
+          </AssociationSet>
+          <AssociationSet Name="FK_padraoID" Association="Self.FK_padraoID">
+            <End Role="Padrao" EntitySet="Padrao" />
+            <End Role="Professor" EntitySet="Professor" />
+          </AssociationSet>
+          <FunctionImport Name="GetCursosPorAlunoId" ReturnType="Collection(EscolaModel.GetCursosPorAlunoId_Result)">
+            <Parameter Name="AlunoId" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_AtualizarAluno">
+            <Parameter Name="AlunoId" Mode="In" Type="Int32" />
+            <Parameter Name="PadraoId" Mode="In" Type="Int32" />
+            <Parameter Name="AlunoNome" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_DeletarAluno">
+            <Parameter Name="AlunoId" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_InserirAlunoInfo">
+            <Parameter Name="PadraoId" Mode="In" Type="Int32" />
+            <Parameter Name="AlunoNome" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="GetCursosPorAlunoId_Result">
+          <Property Type="Int32" Name="CursoId" Nullable="true" />
+          <Property Type="String" Name="CursoNome" Nullable="true" MaxLength="250" />
+          <Property Type="Int32" Name="ProfessorId" Nullable="true" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="EscolaModelStoreContainer" CdmEntityContainer="EscolaEntity">
+          <EntitySetMapping Name="Aluno">
+            <EntityTypeMapping TypeName="EscolaModel.Aluno">
+              <MappingFragment StoreEntitySet="Aluno">
+                <ScalarProperty Name="AlunoID" ColumnName="AlunoID" />
+                <ScalarProperty Name="AlunoNome" ColumnName="AlunoNome" />
+                <ScalarProperty Name="PadraoID" ColumnName="PadraoID" />
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AlunoCurso">
+            <EntityTypeMapping TypeName="EscolaModel.AlunoCurso">
+              <MappingFragment StoreEntitySet="AlunoCurso">
+                <ScalarProperty Name="AlunoID" ColumnName="AlunoID" />
+                <ScalarProperty Name="CursoID" ColumnName="CursoID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AlunoEndereco">
+            <EntityTypeMapping TypeName="EscolaModel.AlunoEndereco">
+              <MappingFragment StoreEntitySet="AlunoEndereco">
+                <ScalarProperty Name="AlunoID" ColumnName="AlunoID" />
+                <ScalarProperty Name="Endereco1" ColumnName="Endereco1" />
+                <ScalarProperty Name="Endereco2" ColumnName="Endereco2" />
+                <ScalarProperty Name="Cidade" ColumnName="Cidade" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Curso">
+            <EntityTypeMapping TypeName="EscolaModel.Curso">
+              <MappingFragment StoreEntitySet="Curso">
+                <ScalarProperty Name="CursoID" ColumnName="CursoID" />
+                <ScalarProperty Name="CursoNome" ColumnName="CursoNome" />
+                <ScalarProperty Name="CursoLocalizacao" ColumnName="CursoLocalizacao" />
+                <ScalarProperty Name="ProfessorID" ColumnName="ProfessorID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Padrao">
+            <EntityTypeMapping TypeName="EscolaModel.Padrao">
+              <MappingFragment StoreEntitySet="Padrao">
+                <ScalarProperty Name="PadraoID" ColumnName="PadraoID" />
+                <ScalarProperty Name="PadraoNome" ColumnName="PadraoNome" />
+                <ScalarProperty Name="Descricao" ColumnName="Descricao" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Professor">
+            <EntityTypeMapping TypeName="EscolaModel.Professor">
+              <MappingFragment StoreEntitySet="Professor">
+                <ScalarProperty Name="ProfessorID" ColumnName="ProfessorID" />
+                <ScalarProperty Name="ProfessorNome" ColumnName="ProfessorNome" />
+                <ScalarProperty Name="PadraoID" ColumnName="PadraoID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="view_AlunoCurso">
+            <EntityTypeMapping TypeName="EscolaModel.view_AlunoCurso">
+              <MappingFragment StoreEntitySet="view_AlunoCurso">
+                <ScalarProperty Name="AlunoID" ColumnName="AlunoID" />
+                <ScalarProperty Name="AlunoNome" ColumnName="AlunoNome" />
+                <ScalarProperty Name="CursoID" ColumnName="CursoID" />
+                <ScalarProperty Name="CursoNome" ColumnName="CursoNome" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetCursosPorAlunoId" FunctionName="EscolaModel.Store.GetCursosPorAlunoId">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="EscolaModel.GetCursosPorAlunoId_Result">
+                <ScalarProperty Name="CursoId" ColumnName="CursoId" />
+                <ScalarProperty Name="CursoNome" ColumnName="CursoNome" />
+                <ScalarProperty Name="ProfessorId" ColumnName="ProfessorId" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_AtualizarAluno" FunctionName="EscolaModel.Store.sp_AtualizarAluno" />
+          <FunctionImportMapping FunctionImportName="sp_DeletarAluno" FunctionName="EscolaModel.Store.sp_DeletarAluno" />
+          <FunctionImportMapping FunctionImportName="sp_InserirAlunoInfo" FunctionName="EscolaModel.Store.sp_InserirAlunoInfo" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
